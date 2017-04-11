@@ -47,30 +47,12 @@
 	"use strict";
 	
 	__webpack_require__(1);
-	
-	var _test = __webpack_require__(2);
-	
-	(0, _test.blegh)();
 
 /***/ },
 /* 1 */
 /***/ function(module, exports) {
 
 	module.exports = require("source-map-support/register");
-
-/***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.blegh = blegh;
-	function blegh() {
-		console.log("it workded");
-	}
 
 /***/ }
 /******/ ]);
