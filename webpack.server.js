@@ -1,6 +1,7 @@
 var path = require("path"),
     fs = require("fs"),
-    webpack = require("webpack");
+    webpack = require("webpack"),
+    _ = require("lodash");
 
 const nodeModules = fs.readdirSync("./node_modules").filter(d => d != ".bin");
 function ignoreNodeModules(context, request, callback) {
