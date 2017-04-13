@@ -9,7 +9,7 @@ export function validateLogin(username) {
         validator.error("Username must be fewer than 20 characters");
     }
     if (!USERNAME_REGEX.test(username)) {
-        validator.error("Username can only contain numbers, digits, underscores and dashes");
+        validator.error("Username can only contain letters, numbers, underscores and dashes");
     }
     return validator;
 }

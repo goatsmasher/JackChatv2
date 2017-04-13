@@ -3,6 +3,9 @@ import { Observable } from "rxjs";
 import { validateLogin } from "shared/validation/users";
 
 export class UserStore {
+    get currentUser() { return this._currentUser; }
+    get isLoggedIn() { return this._currentUser && this._currentUser.isLoggedIn; }
+
     constructor(server) {
         this._server = server;
 
@@ -20,16 +23,36 @@ export class UserStore {
 
         this.state$.connect();
 
+        this.currentUser$ = Observable.merge(
+            this._server.on$("auth:login"),
+            this._server.on$("auth:logout").mapTo({}))
+            .startWith({})
+            .publishReplay(1)
+            .refCount();
+
+        this.currentUser$.subscribe(user => this._currentUser = user);
+
+
         this._server.on("connect", () => {
             this._server.emit("users:list");
-        }); 
+            if (!this.isLoggedIn) {
+                return;
+            }
+            else{
+                this.login$(this._currentUser.name).subscribe(), error => alert(console.log(`Could not login: ${error} || Unkown Error`));
+            }
+        });
     }
     login$(name) {
         const validator = validateLogin(name);
-        if(validator.hasErrors) {
-            return Observable.throw({message: validator.message});
+        if (validator.hasErrors) {
+            return Observable.throw({ message: validator.message });
         }
-        return this._server.emitAction$("auth:login", {name});
+        return this._server.emitAction$("auth:login", { name });
+    }
+
+    logout$() {
+        return this._server.emitAction$("auth:logout");
     }
 }
 
@@ -63,12 +86,12 @@ function opAdd(user) {
 
 function opRemove(user) {
     return state => {
-        const index = _.findIndex(state.users, {name: user.name});
+        const index = _.findIndex(state.users, { name: user.name });
         if (index !== -1) {
             state.users.splice(index, 1);
         }
         return {
-            type: "remove", 
+            type: "remove",
             user: user,
             state: state
         };
